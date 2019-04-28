@@ -1,0 +1,66 @@
+Sub Test1()
+Application.ScreenUpdating = False
+    Dim temp As Worksheet
+    Dim sheetname As String
+    Dim sheetcount As Long
+    Dim headerrow As Long
+    Dim startrow As Long
+    Dim skiprows As Long
+    Dim rowheader As String
+    Dim vArray() As Variant
+    Dim titlecheck As String
+    Dim arraycounter As Long
+    Dim headerstart As Boolean
+    Dim lastrow As Long
+   
+    startrow = 15
+    headerrow = 11
+    skiprows = 2
+    arraycounter = 0
+   
+    For a = 29 To 62
+        Sheets.Add After:=ActiveSheet
+        counter = 2
+        sheetcount = a
+        sheetname = "00" & sheetcount
+        'Workbook("GraphsNStuff").Sheets.Add After:=ActiveSheet
+        ActiveSheet.Select
+        Set temp = ActiveSheet
+        temp.Name = sheetname
+        'MsgBox sheetname
+        Workbooks("DataViz").Sheets(sheetname).Range("A11:J11").Copy Workbooks("GraphsNStuff2").Sheets(sheetname).Range("A1:J1")
+        For b = 15 To 100 Step 2
+            titlecheck = Workbooks("DataViz").Sheets(sheetname).Range("A" & b)
+            If Left(titlecheck, 3) = "NET" Then
+                'MsgBox (titlecheck)
+                Exit For
+            End If
+            Workbooks("DataViz").Sheets(sheetname).Range("A" & b & ":J" & b).Copy Workbooks("GraphsNStuff2").Sheets(sheetname).Range("A" & counter & ":J" & counter)
+            counter = counter + 1
+        Next
+        Workbooks("GraphsNStuff2").Sheets(sheetname).Columns("B:B").Select
+        Selection.Delete Shift:=xlToLeft
+        Workbooks("GraphsNStuff2").Sheets(sheetname).Columns("A:A").Select
+        With Selection
+            .VerticalAlignment = xlBottom
+            .WrapText = False
+            .Orientation = 0
+            .AddIndent = False
+            .IndentLevel = 0
+            .ShrinkToFit = False
+            .ReadingOrder = xlContext
+            .MergeCells = False
+        End With
+        lastrow = WorksheetFunction.CountA(Workbooks("GraphsNStuff2").Sheets(sheetname).Range("A2:A50"))
+        'MsgBox lastrow
+        ActiveSheet.Range("B2").Select
+        ActiveSheet.Shapes.AddChart2(201, xlColumnClustered).Select
+        ActiveChart.SetSourceData Source:=Range(sheetname & "!$A$1:$I$10")
+        ActiveSheet.Shapes("Chart 3").ScaleWidth 1.7833333333, msoFalse, _
+            msoScaleFromBottomRight
+        ActiveSheet.Shapes("Chart 3").ScaleHeight 1.3732640712, msoFalse, _
+            msoScaleFromTopLeft
+    Next
+   
+Application.ScreenUpdating = True
+End Sub
